@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모니터링</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        #current-time {
+            margin-bottom: 20px;
+        }
+        #video-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        #alarm {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ffcccb;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            font-size: 18px;
+            text-align: center;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>모니터링</h1>
+        <div id="current-time"></div>
+    </header>
+    <div id="video-container">
+        <img id="video" src="{{ url_for('video_feed') }}" width="800" />
+    </div>
+    <div id="alarm">
+        WARNING<br>
+        연기가 감지되었습니다.<br>
+        3초 후에 알림이 울립니다.
+    </div>
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString();
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        function checkSmokeStatus() {
+            fetch('/smoke_status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.smoke_detected) {
+                        document.getElementById('alarm').style.display = 'block';
+                        setTimeout(() => {
+                            alert(`연기가 감지되었습니다! 시간: ${data.detected_time}`);
+                        }, 3000);
+                    } else {
+                        document.getElementById('alarm').style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        setInterval(updateTime, 1000);
+        setInterval(checkSmokeStatus, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보고서</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #report-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            width: 80%;
+        }
+        .log-entry {
+            width: 100%;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        nav {
+            margin-top: 20px;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>보고서</h1>
+    </header>
+    <div id="report-container">
+        {% for label, entries in detection_logs.items() %}
+            <h2>{{ label }}</h2>
+            {% for entry in entries %}
+                <div class="log-entry">
+                    {{ entry.time }} - {{ entry.duration }} (Score: {{ entry.score }})
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    <nav>
+        <a href="{{ url_for('index') }}">실시간 모니터링</a>
+        <a href="{{ url_for('review') }}">다시 보기</a>
+    </nav>
+    <a href="{{ url_for('download_report') }}" download>보고서 다운로드</a>
+</body>
+</html>
